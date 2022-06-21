@@ -1,30 +1,31 @@
-import React from 'react';
-import Card from '../components/Card';
+import React, { useEffect, useState} from 'react';
 import { useParams } from 'react-router-dom'
+import axios from 'axios';
 
 export const Song = () => {
     const { id } = useParams()
-    const [posts, setPosts] = useState([])
-
+    let [songs, setSongs] = useState({})
+    let [songLink, setSongLink] = useState([])
+  
     useEffect(() => {
         axios
-        .get(`https://cors-anywhere.herokuapp.com/https://openwhyd.org/adrien/{id}?format=json&limit=14`, {
-            params:{
-            _limit: 10
-            }
-        })
+        .get(`https://cors-anywhere.herokuapp.com/https://openwhyd.org/c/${id}?format=json`)
         .then(response => {
-            setPosts(response.data)
-            console.log(response.data)
+            setSongs(response.data.data)
+            console.log(response.data.data)
+            setSongLink(response.data.data.src)
         })
     }, [])
 
     return (
         <>
-        <h1>Space X Ships</h1>
-        <div className="App" style={{display: "grid", gridTemplateColumns: "1fr 1fr 1fr", rowGap: "10px", columnGap: "20px"}}>
-            <Card image={id.image} name={id.name} />
-        </div>
+        <div className='App' style={{display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "15px" }}>
+            <div style={{width: "90%", height: "400px", backgroundRepeat: "no-repeat", backgroundImage: `url(${songs.img})`, backgroundSize: "contain", backgroundPosition: "center"}}></div>
+            <h3>{songs.name}</h3> 
+            <a href={`${songLink.id}`} target="_blank" rel="noreferrer">
+                <button>Youtube Link</button>
+            </a>
+        </div> 
         </>
     );
 };
